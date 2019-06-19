@@ -1,0 +1,3 @@
+C:/Users/fabio/iCloudDrive/Informatica/github/HangMan/cmake-build-debug/CMakeFiles/impiccato.dir
+C:/Users/fabio/iCloudDrive/Informatica/github/HangMan/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/fabio/iCloudDrive/Informatica/github/HangMan/cmake-build-debug/CMakeFiles/rebuild_cache.dir
