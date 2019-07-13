@@ -2,6 +2,7 @@
 #pragma clang diagnostic pop
 #pragma ide diagnostic ignored "cert-msc30-c"
 #pragma ide diagnostic ignored "cert-err34-c" // delete these first 4 lines if you get any trouble
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,22 +14,32 @@
 // todo // this explain itself
 //* debug / useless stuff
 
-#define qnt 660000       //! size of the struct of wordlist
-#define leng 25          // vector for the picked word
-#define clean_ ;         // clean the terminal
-#define sleep_1 sleep(1) // make 1 second of delay
+#define LOADINGBAR "===================="
+#define LOADINGBARWIDTH 20
+#define qnt 660000            //! size of the struct of wordlist
+#define leng 25               // vector for the picked word
+#define clean_ system("cls"); // clean the terminal
+#define sleep_1 sleep(1)      // make 1 second of delay
 
 typedef struct
 {
     char word[leng];
 } dictionary;
-
 dictionary ita[qnt];
 
-void pick_word(dictionary ita[], char right[], int *dim_word);
-void display_word(char right[], int guessed[], int *dim_word);
-void pick_word_difficulty(dictionary ita[], char right[], int *dim_word);
-void get_data(dictionary ita[qnt]);
+typedef struct
+{
+    char c[75];
+} array;
+array impiccati[6];
+
+void loadtext();
+void check_input(char char_try, char word_try[], char right[], int *try_available);
+void user_input(char char_try, char word_try[]);                                  //! get the input for playing from the user
+void pick_word(dictionary ita[], char right[], int *dim_word);                    //! pick a word from the struct
+void display_word(char right[], int guessed[], int *dim_word, int try_available); //! display the word what the user has been guessed
+void pick_word_difficulty(dictionary ita[], char right[], int *dim_word);         //todo // trying to implement a difficulty system
+void get_data(dictionary ita[qnt]);                                               // ! get the struct from the txt file
 int menu();
 int main()
 {
@@ -37,20 +48,23 @@ int main()
     int try_available;
     int *guessed;
     int dim_word = 0;
+    char char_try, word_try[leng];
+
+    loadtext();
     get_data(ita);
     while (exit == 0)
     {
-        printf("\nWelcome to the hangman game \n"
-               " _                                             \n"
-               "| |                                            \n"
-               "| |__   __ _ _ __   __ _ _ __ ___   __ _ _ __  \n"
-               "| '_ \\ / _` | '_ \\ / _` | '_ ` _ \\ / _` | '_ \\ \n"
-               "| | | | (_| | | | | (_| | | | | | | (_| | | | |\n"
-               "|_| |_|\\__,_|_| |_|\\__, |_| |_| |_|\\__,_|_| |_|\n"
-               "                    __/ |                      \n"
-               "                   |___/                     \n");
+        printf("\n\tWelcome to the hangman game \n"
+               "\t _                                             \n"
+               "\t| |                                            \n"
+               "\t| |__   __ _ _ __   __ _ _ __ ___   __ _ _ __  \n"
+               "\t| '_ \\ / _` | '_ \\ / _` | '_ ` _ \\ / _` | '_ \\ \n"
+               "\t| | | | (_| | | | | (_| | | | | | | (_| | | | |\n"
+               "\t|_| |_|\\__,_|_| |_|\\__, |_| |_| |_|\\__,_|_| |_|\n"
+               "\t                    __/ |                      \n"
+               "\t                   |___/                     \n");
         sleep_1;
-        printf("\nPress enter to continue  \n");
+        printf("\n\tPress enter to continue  \n");
         getchar();
         clean_;
         choice = menu();
@@ -62,19 +76,23 @@ int main()
             break;
         case 1:
 
-            pick_word(ita, right, &dim_word);                // pick a word that match the difficulty choosen by user
+            pick_word_difficulty(ita, right, &dim_word);     //! pick a word that match the difficulty choosen by user
             guessed = (int *)malloc(dim_word * sizeof(int)); //! array that marks what character have been guessed;
-            printf("la memoria allocata e di %d byte \n", dim_word);
-            //* system("pause");
-            guessed[0] = 1; //! zero and 1 are flag for what char has been guessed
+            guessed[0] = 1;                                  //! zero and 1 are flag for what char has been guessed
+            for (int a = 1; a < dim_word - 1; a++)
+            {
+                guessed[a] = 0;
+            }
+
             guessed[dim_word - 1] = 1;
             try_available = 5;
-            //*printf("AAA %s", right);
-            /* 
+
             while (try_available != 0)
             {
-                try_available = 0;
-            }*/
+                display_word(right, guessed, &dim_word, try_available);
+                user_input(char_try, word_try);
+                check_input(char_try, word_try, right, &try_available);
+            }
             break;
         case 2:
             get_data(ita);
@@ -90,34 +108,82 @@ int main()
 int menu()
 {
     int a = 0;
-    printf("\nchoose the game mode \n "
-           "\n0) exit the game "
-           "\n1) the game choose a word and you pick it "
-           "\n2) you choose the  word and the program try to guess it   :)  \n");
+    printf("\n\tchoose the game mode \n "
+           "\n\t0) exit the game "
+           "\n\t1) the game choose a word and you pick it "
+           "\n\t2) you choose the  word and the program try to guess it   :)  \n");
     scanf("%d", &a);
     sleep_1;
     clean_;
     return (a);
 }
-
+void loadtext()
+{
+    strcpy(impiccati[0].c, "+---+\n"
+                           "  |   |\n"
+                           "  O   |\n"
+                           " /|\\ |\n"
+                           " / \\ |\n"
+                           "      |\n"
+                           "=========");
+    strcpy(impiccati[1].c, " +---+\n"
+                           "  |   |\n"
+                           "  O   |\n"
+                           " /|\\  |\n"
+                           " /    |\n"
+                           "      |\n"
+                           "=========");
+    strcpy(impiccati[2].c, " +---+\n"
+                           "  |   |\n"
+                           "  O   |\n"
+                           " /|\\  |\n"
+                           "      |\n"
+                           "      |\n"
+                           "=========");
+    strcpy(impiccati[3].c, "+---+\n"
+                           "  |   |\n"
+                           "  O   |\n"
+                           " /|   |\n"
+                           "      |\n"
+                           "      |\n"
+                           "=========");
+    strcpy(impiccati[4].c, " +---+\n"
+                           "  |   |\n"
+                           "  O   |\n"
+                           "  |   |\n"
+                           "      |\n"
+                           "      |\n"
+                           "=========");
+    strcpy(impiccati[5].c, "+---+\n"
+                           "  |   |\n"
+                           "      |\n"
+                           "      |\n"
+                           "      |\n"
+                           "      |\n"
+                           "=========");
+}
 void get_data(dictionary ita[qnt])
 {
-    FILE *fp; // todo // trying to implement a progress bar
+
+    FILE *fp;
     fp = fopen("input.txt", "r");
-    int percentage1 = 0;
-    int percentage2 = 1;
 
     if (fp != NULL)
-    {   
+    {
+        int percentualprec = -1;
         for (int a = 0; a < qnt; a++)
         {
-            if (percentage2 = ((100 * a) / qnt) > percentage1)
+            int percentage = ((a * 100) / qnt) + 1;
+            int barra = (percentage * LOADINGBARWIDTH) / 100;
+            int spazi = LOADINGBARWIDTH - barra;
+            if (percentualprec != percentage)
             {
-                printf("\t %d%% load percentage\n", percentage2);
+                percentualprec = percentage;
+                system("cls");
+                printf("LOADING: %3d%% [%.*s%*s]", percentage, barra, LOADINGBAR, spazi, "");
+                //system("pause");
             }
             fscanf(fp, "%s", ita[a].word);
-            //* printf("Word  %s in position %d\n", ita[a].word, a);
-            percentage1 = (100 * a) / qnt;
         }
         fclose(fp);
         sleep_1;
@@ -137,36 +203,55 @@ void pick_word(dictionary ita[], char right[], int *dim_word)
     position = rand() % qnt;
 
     strcpy(right, ita[position].word);
-    //* printf("\nthe choosen word is  %s \n", right);
+    printf("\nthe choosen word is  %s \n", right);
 
     *dim_word = strlen(right);
     printf("dim word is %d in pick word \n", *dim_word);
 }
 
-void display_word(char right[], int guessed[], int *dim_word)
+void display_word(char right[], int guessed[], int *dim_word, int try_available)
 {
+    printf("%s", impiccati[try_available].c);
+    printf("\n\n\n");
     for (int a = 0; a < *dim_word; a++)
     {
-        break;
-        for (int lol = 0; lol == 0; lol == 0)
+        if (guessed[a] == 1)
         {
+            printf("%c", right[a]);
         }
+        else if (guessed[a] == 0)
+        {
+            printf("_");
+        }
+    }
+    printf("\n\n");
+    if (try_available != 0)
+    {
+        printf("you have %d try left\n", try_available);
+    }
+    else if (try_available == 0)
+    {
+        printf("you have lost \n ");
+        printf("the correct word was \n ", right);
     }
 }
 
-void pick_word_difficulty_difficulty(dictionary ita[], char right[], int *dim_word)
+void pick_word_difficulty(dictionary ita[], char right[], int *dim_word)
 {
     int difficulty = 3;
     int position;
     *dim_word = 0;
     while (right != NULL)
     {
-
+        printf("\n\n\tGuide to difficulty\n"
+               "\n\tEasy are word from 3 to 5 character \n"
+               "\n\tMedium are word from 4 to 7 character\n"
+               "\n\tHard are word from 6 to 12 character\n");
         srand((unsigned int)time(NULL));
-        printf("Select the difficulty level \n"
-               "\n0) Easy "
-               "\n1) Medium  "
-               "\n2) Hard \n");
+        printf("\tSelect the difficulty level \n"
+               "\n\t0) Easy "
+               "\n\t1) Medium  "
+               "\n\t2) Hard \n");
         scanf("%d", &difficulty);
 
         switch (difficulty)
@@ -198,6 +283,34 @@ void pick_word_difficulty_difficulty(dictionary ita[], char right[], int *dim_wo
         default:
             break;
         }
-        printf("\nla parola scelta e %s \n", right);
+        printf("\n\tthe choosen word is  %s \n", right);
     }
+}
+
+void user_input(char char_try, char word_try[])
+{
+    int input = 2;
+    printf("!make a choice "
+           "\n0) try to guess if a char is in the word"
+           "\n1) try to guess the entire word\n ");
+    scanf("%d", &input);
+    switch (input)
+    {
+    case 0:
+        printf("write down a char you think is in the word\n");
+        scanf("%c", char_try);
+        break;
+    case 1:
+        printf("write down what do you think is the correct word \n");
+        scanf("%s", word_try);
+        break;
+    default:
+        printf("you can only choose 0 or 1 ");
+        user_input(char_try, word_try);
+        break;
+    }
+}
+
+void check_input(char char_try, char word_try[], char right[], int *try_available)
+{
 }
