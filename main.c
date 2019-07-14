@@ -34,12 +34,12 @@ typedef struct
 array impiccati[6];
 
 void loadtext();
-void check_input(char char_try, char word_try[], char right[], int *try_available);
-void user_input(char char_try, char word_try[]);                                  //! get the input for playing from the user
-void pick_word(dictionary ita[], char right[], int *dim_word);                    //! pick a word from the struct
-void display_word(char right[], int guessed[], int *dim_word, int try_available); //! display the word what the user has been guessed
-void pick_word_difficulty(dictionary ita[], char right[], int *dim_word);         //todo // trying to implement a difficulty system
-void get_data(dictionary ita[qnt]);                                               // ! get the struct from the txt file
+void check_input(char char_try, char word_try[], char right[], int choise, int *try_available, int *dim_word, int guessed[], int *won);
+int user_input(char *char_try, char word_try[]);                                  //  get the input for playing from the user
+void pick_word(dictionary ita[], char right[], int *dim_word);                    //  pick a word from the struct
+void display_word(char right[], int guessed[], int *dim_word, int try_available); // display the word what the user has been guessed
+void pick_word_difficulty(dictionary ita[], char right[], int *dim_word);         // choose the word to play with
+void get_data(dictionary ita[qnt]);                                               // get the struct from the txt file
 int menu();
 int main()
 {
@@ -49,6 +49,9 @@ int main()
     int *guessed;
     int dim_word = 0;
     char char_try, word_try[leng];
+
+    //*word_try2 = word_try;
+    int won; //! 0 undefined  1 user has won 2 user has lost
 
     loadtext();
     get_data(ita);
@@ -76,7 +79,7 @@ int main()
             break;
         case 1:
 
-            pick_word_difficulty(ita, right, &dim_word);     //! pick a word that match the difficulty choosen by user
+            pick_word(ita, right, &dim_word);                //! pick a word that match the difficulty choosen by user
             guessed = (int *)malloc(dim_word * sizeof(int)); //! array that marks what character have been guessed;
             guessed[0] = 1;                                  //! zero and 1 are flag for what char has been guessed
             for (int a = 1; a < dim_word - 1; a++)
@@ -90,15 +93,28 @@ int main()
             while (try_available != 0)
             {
                 display_word(right, guessed, &dim_word, try_available);
-                user_input(char_try, word_try);
-                check_input(char_try, word_try, right, &try_available);
+                int choise = user_input(&char_try, word_try);
+                check_input(char_try, word_try, right, choise, &try_available, &dim_word, guessed, &won);
+                if (try_available == 0 && won == 0)
+                {
+                    won = 2;
+                }
+                if (won == 1)
+                {
+                    printf("Congratulation you have won \n");
+                    try_available = 0;
+                }
+                else if (won == 2)
+                {
+                    printf("You lost , next time will be more lucky\n");
+                }
             }
             break;
         case 2:
             get_data(ita);
             break;
         default:
-            printf("Scelta non valida");
+            printf("Choice is invalid\n");
             break;
         }
     }
@@ -119,48 +135,48 @@ int menu()
 }
 void loadtext()
 {
-    strcpy(impiccati[0].c, "+---+\n"
-                           "  |   |\n"
-                           "  O   |\n"
-                           " /|\\ |\n"
-                           " / \\ |\n"
-                           "      |\n"
-                           "=========");
-    strcpy(impiccati[1].c, " +---+\n"
-                           "  |   |\n"
-                           "  O   |\n"
-                           " /|\\  |\n"
-                           " /    |\n"
-                           "      |\n"
-                           "=========");
-    strcpy(impiccati[2].c, " +---+\n"
-                           "  |   |\n"
-                           "  O   |\n"
-                           " /|\\  |\n"
-                           "      |\n"
-                           "      |\n"
-                           "=========");
-    strcpy(impiccati[3].c, "+---+\n"
-                           "  |   |\n"
-                           "  O   |\n"
-                           " /|   |\n"
-                           "      |\n"
-                           "      |\n"
-                           "=========");
-    strcpy(impiccati[4].c, " +---+\n"
-                           "  |   |\n"
-                           "  O   |\n"
-                           "  |   |\n"
-                           "      |\n"
-                           "      |\n"
-                           "=========");
-    strcpy(impiccati[5].c, "+---+\n"
-                           "  |   |\n"
-                           "      |\n"
-                           "      |\n"
-                           "      |\n"
-                           "      |\n"
-                           "=========");
+    strcpy(impiccati[0].c, "\t+---+\n"
+                           "\t  |   |\n"
+                           "\t  O   |\n"
+                           "\t /|\\ |\n"
+                           "\t / \\ |\n"
+                           "\t      |\n"
+                           "\t=========");
+    strcpy(impiccati[1].c, "\t +---+\n"
+                           "\t  |   |\n"
+                           "\t  O   |\n"
+                           "\t /|\\  |\n"
+                           "\t /    |\n"
+                           "\t      |\n"
+                           "\t=========");
+    strcpy(impiccati[2].c, "\t +---+\n"
+                           "\t  |   |\n"
+                           "\t  O   |\n"
+                           "\t /|\\  |\n"
+                           "\t      |\n"
+                           "\t      |\n"
+                           "\t=========");
+    strcpy(impiccati[3].c, "\t+---+\n"
+                           "\t  |   |\n"
+                           "\t  O   |\n"
+                           "\t /|   |\n"
+                           "\t      |\n"
+                           "\t      |\n"
+                           "\t=========");
+    strcpy(impiccati[4].c, "\t +---+\n"
+                           "\t  |   |\n"
+                           "\t  O   |\n"
+                           "\t  |   |\n"
+                           "\t      |\n"
+                           "\t      |\n"
+                           "\t=========");
+    strcpy(impiccati[5].c, "\t+---+\n"
+                           "\t  |   |\n"
+                           "\t      |\n"
+                           "\t      |\n"
+                           "\t      |\n"
+                           "\t      |\n"
+                           "\t=========");
 }
 void get_data(dictionary ita[qnt])
 {
@@ -181,7 +197,6 @@ void get_data(dictionary ita[qnt])
                 percentualprec = percentage;
                 system("cls");
                 printf("LOADING: %3d%% [%.*s%*s]", percentage, barra, LOADINGBAR, spazi, "");
-                //system("pause");
             }
             fscanf(fp, "%s", ita[a].word);
         }
@@ -212,7 +227,7 @@ void pick_word(dictionary ita[], char right[], int *dim_word)
 void display_word(char right[], int guessed[], int *dim_word, int try_available)
 {
     printf("%s", impiccati[try_available].c);
-    printf("\n\n\n");
+    printf("\n\n\n\t");
     for (int a = 0; a < *dim_word; a++)
     {
         if (guessed[a] == 1)
@@ -236,6 +251,7 @@ void display_word(char right[], int guessed[], int *dim_word, int try_available)
     }
 }
 
+// todo / fix the diffuculty system
 void pick_word_difficulty(dictionary ita[], char right[], int *dim_word)
 {
     int difficulty = 3;
@@ -287,30 +303,83 @@ void pick_word_difficulty(dictionary ita[], char right[], int *dim_word)
     }
 }
 
-void user_input(char char_try, char word_try[])
+int user_input(char *char_try, char word_try[])
 {
+    //char_try = 0;
+    //word_try = NULL;
     int input = 2;
-    printf("!make a choice "
-           "\n0) try to guess if a char is in the word"
-           "\n1) try to guess the entire word\n ");
-    scanf("%d", &input);
-    switch (input)
+    do
     {
-    case 0:
-        printf("write down a char you think is in the word\n");
-        scanf("%c", char_try);
-        break;
-    case 1:
-        printf("write down what do you think is the correct word \n");
-        scanf("%s", word_try);
-        break;
-    default:
-        printf("you can only choose 0 or 1 ");
-        user_input(char_try, word_try);
-        break;
-    }
+        printf("!make a choice "
+               "\n0) try to guess if a char is in the word"
+               "\n1) try to guess the entire word\n ");
+        scanf("%d", &input);
+        fflush(stdin);
+        switch (input)
+        {
+        case 0:
+            printf("write down a char you think is in the word\n");
+            scanf("%c", char_try);
+            break;
+        case 1:
+            printf("write down what do you think is the correct word \n");
+            //fflush(stdin);
+            scanf("%s", word_try);
+            break;
+        default:
+            printf("you can only choose 0 or 1 ");
+            break;
+        }
+    } while (input != 0 && input != 1);
+    return input;
 }
 
-void check_input(char char_try, char word_try[], char right[], int *try_available)
+void check_input(char char_try, char word_try[], char right[], int choise, int *try_available, int *dim_word, int guessed[], int *won)
 {
+    int flag = 0;
+    int count = 0;
+    switch (choise)
+    {
+    case 0:
+        for (int a = 0; a < *dim_word; a++)
+        {
+            if (char_try == right[a])
+            {
+                count++;
+                flag = 1;
+                guessed[a] = 1;
+            }
+        }
+        if (flag == 0)
+        {
+            printf("char %c not found in word \n", char_try);
+            (*try_available)--;
+        }
+        else
+        {
+            printf("%d char has been guessed\n", count);
+            int num = 0;
+            for (int a = 0; a < *dim_word; a++)
+            {
+                num += guessed[a];
+            }
+            if (num == *dim_word)
+                *won = 1;
+        }
+        break;
+    case 1:
+        if (strcmp(word_try, right) == 0)
+        {
+            printf("Congratulation you have guessed the word\n");
+            *won = 1;
+        }
+        else
+        {
+            printf("the word you have entered is incorrect\n");
+            (*try_available)--;
+        }
+        break;
+    default:
+        break;
+    }
 }
