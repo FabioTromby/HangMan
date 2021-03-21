@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/fabio/iCloudDrive/Informatica/github/HangMan
+# Install script for directory: /Users/fabiotrombatore/Library/Mobile Documents/com~apple~CloudDocs/Informatica/github/HangMan
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/impiccato")
+  set(CMAKE_INSTALL_PREFIX "/usr/local")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/fabio/iCloudDrive/Informatica/github/HangMan/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/fabiotrombatore/Library/Mobile Documents/com~apple~CloudDocs/Informatica/github/HangMan/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

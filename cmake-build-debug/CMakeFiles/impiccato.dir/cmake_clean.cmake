@@ -1,9 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/impiccato.dir/main.c.obj"
+  "CMakeFiles/impiccato.dir/main.c.o"
+  "impiccato"
   "impiccato.pdb"
-  "impiccato.exe"
-  "impiccato.exe.manifest"
-  "libimpiccato.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.

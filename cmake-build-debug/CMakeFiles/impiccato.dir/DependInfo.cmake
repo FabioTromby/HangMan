@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "C:/Users/fabio/iCloudDrive/Informatica/github/HangMan/main.c" "C:/Users/fabio/iCloudDrive/Informatica/github/HangMan/cmake-build-debug/CMakeFiles/impiccato.dir/main.c.obj"
+  "/Users/fabiotrombatore/Library/Mobile Documents/com~apple~CloudDocs/Informatica/github/HangMan/main.c" "/Users/fabiotrombatore/Library/Mobile Documents/com~apple~CloudDocs/Informatica/github/HangMan/cmake-build-debug/CMakeFiles/impiccato.dir/main.c.o"
   )
-set(CMAKE_C_COMPILER_ID "GNU")
+set(CMAKE_C_COMPILER_ID "AppleClang")
 
 # The include file search paths:
 set(CMAKE_C_TARGET_INCLUDE_PATH

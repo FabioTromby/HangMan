@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-#include <windows.h>
+//#include <windows.h>
 
 //! things important
 // todo // this explain itself
@@ -16,10 +16,10 @@
 
 #define LOADINGBAR "===================="
 #define LOADINGBARWIDTH 20
-#define qnt 660000            //! size of the struct of wordlist
-#define leng 25               // vector for the picked word
-#define clean_ system("cls"); // clean the terminal
-#define sleep_1 sleep(1)      // make 1 second of delay
+#define qnt 660000              //! size of the struct of wordlist
+#define leng 25                 // vector for the picked word
+#define clean_ system("clear"); // clean the terminal
+#define sleep_1 sleep(1)        // make 1 second of delay
 
 typedef struct
 {
@@ -103,10 +103,12 @@ int main()
                 {
                     printf("Congratulation you have won \n");
                     try_available = 0;
+                    sleep(5);
                 }
                 else if (won == 2)
                 {
                     printf("You lost , next time will be more lucky\n");
+                    printf("the word was %s \n", right);
                 }
             }
             break;
@@ -195,8 +197,8 @@ void get_data(dictionary ita[qnt])
             if (percentualprec != percentage)
             {
                 percentualprec = percentage;
-                system("cls");
-                printf("LOADING: %3d%% [%.*s%*s]", percentage, barra, LOADINGBAR, spazi, "");
+                clean_;
+                    printf("LOADING: %3d%% [%.*s%*s]", percentage, barra, LOADINGBAR, spazi, "");
             }
             fscanf(fp, "%s", ita[a].word);
         }
@@ -218,10 +220,10 @@ void pick_word(dictionary ita[], char right[], int *dim_word)
     position = rand() % qnt;
 
     strcpy(right, ita[position].word);
-    printf("\nthe choosen word is  %s \n", right);
+    //* printf("\nthe choosen word is  %s \n", right);
 
     *dim_word = strlen(right);
-    printf("dim word is %d in pick word \n", *dim_word);
+    printf("dim word is %d  \n", *dim_word);
 }
 
 void display_word(char right[], int guessed[], int *dim_word, int try_available)
@@ -263,13 +265,14 @@ void pick_word_difficulty(dictionary ita[], char right[], int *dim_word)
                "\n\tEasy are word from 3 to 5 character \n"
                "\n\tMedium are word from 4 to 7 character\n"
                "\n\tHard are word from 6 to 12 character\n");
-        srand((unsigned int)time(NULL));
         printf("\tSelect the difficulty level \n"
                "\n\t0) Easy "
                "\n\t1) Medium  "
                "\n\t2) Hard \n");
         scanf("%d", &difficulty);
 
+
+        srand((unsigned int)time(NULL));
         switch (difficulty)
         {
         case 0:
